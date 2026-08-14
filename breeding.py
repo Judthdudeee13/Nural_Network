@@ -1,10 +1,11 @@
 import random
 import time
 
-string = "Hello, World!"
-options = "q w e r t y u i o p a s d f g h j k l z x c v b n m Q W E R T Y U I O P A S D F G H J K L Z X C V B N M , . ? !".split()
+string = '''Hello, World!'''
+options = "q w e r t y u i o p a s d f g h j k l z x c v b n m Q W E R T Y U I O P A S D F G H J K L Z X C V B N M , . ? ! 0 1 2 3 4 5 6 7 8 9 : ' \"  - ".split()
 options.append(" ")
-
+options.append("\n")
+print(options)
 class Parent:
     def __init__(self, lenght):
         string = [random.choice(options) for _ in range(lenght)]
@@ -20,6 +21,8 @@ class Specimin:
         self.generate_self()
         self.mutate()
         self.fitness = 0
+        self.parent1 = None
+        self.parent2 = None
         print(f"Child: {self.string}")
 
     def generate_self(self):
@@ -34,7 +37,7 @@ class Specimin:
     def mutate(self):
         mutated_string = ""
         for i in range(len(self.string)):
-            if random.randint(0, 100) == 0:
+            if random.randint(0, 1000) == 0:
                 mutated_string += random.choice(options)
             else:
                 mutated_string += self.string[i]
@@ -75,18 +78,17 @@ class Enviroment:
         self.parents = new_children
 
     def evolve(self):
-        print(f"Generation: {self.generation}")
         self.judge_fitness()
         self.kill()
         self.next_generation()
         self.generation += 1
+        print(f"Generation: {self.generation} | Best fitness: {self.parents[0].fitness} | Best string: {self.parents[0].string}")
 
-parents = [Parent(13) for _ in range(32)]
-enviroment = Enviroment(2, 13, string, *parents)
+parents = [Parent(len(string)) for _ in range(32)]
+enviroment = Enviroment(2, len(string), string, *parents)
 while True:
-    print()
-    print()
-    print()
     enviroment.evolve()
-    print(len(enviroment.parents))
-    time.sleep(0.1)
+    for x in enviroment.parents:
+        if x.string == string:
+            print(f"Found the string in generation {enviroment.generation}!")
+            exit()
