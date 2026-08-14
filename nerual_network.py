@@ -1,8 +1,7 @@
 import random
-
 class Neuron:
-    def __init__(self):
-        starting_bias = random.uniform(-1, 1)
+    def __init__(self, bias=None):
+        starting_bias = random.uniform(-1, 1) if bias is None else bias
         self.bias = starting_bias
         self.value = 0
 
@@ -26,21 +25,28 @@ class InputNeuron:
     def send(self):
         return self.value
 
-
 class Network:
-    def __init__(self, input, output, *num_per_hidden_layer):
+    def __init__(self, input, output, *num_per_hidden_layer, biases=None, weights=None):
         self.inputs = [InputNeuron() for _ in range(input)]
-        self.hidden_layers = [[Neuron() for _ in range(num_per_hidden_layer[x])] for x in range(len(num_per_hidden_layer))]
-        self.outputs = [Neuron() for _ in range(output)]
+        if biases is None:
+            biases = [[random.uniform(-1, 1) for _ in range(num_per_hidden_layer[x])] for x in range(len(num_per_hidden_layer))]
+            biases.append([random.uniform(-1, 1) for _ in range(output)])
+        else:
+            self.hidden_layers = [[Neuron(bias=biases[x][y]) for y in range(num_per_hidden_layer[x])] for x in range(len(num_per_hidden_layer))]
+            self.outputs = [Neuron(bias=biases[-1][y]) for y in range(output)]
         self.neurons = [self.inputs, *self.hidden_layers, self.outputs]
 
-        self.weights = []
-        for layer in range(len(self.neurons)-1):
-            self.weights.append([])
-            for x in range(len(self.neurons[layer+1])):
-                self.weights[layer].append([])
-                for y in range(len(self.neurons[layer])):
-                    self.weights[layer][x].append(random.uniform(-1, 1))
+        if weights is None:
+            self.weights = []
+            for layer in range(len(self.neurons)-1):
+                self.weights.append([])
+                for x in range(len(self.neurons[layer+1])):
+                    self.weights[layer].append([])
+                    for y in range(len(self.neurons[layer])):
+                        self.weights[layer][x].append(random.uniform(-1, 1))
+        else:
+            self.weights = weights
+        
 
     def input(self, inputs):
         for x in range(len(inputs)):
@@ -61,7 +67,6 @@ class Network:
 
     def get_weights_and_biases(self):
         return self.weights, [[neuron.bias for neuron in layer] for layer in self.neurons[1:]]
-    
 
 net = Network(2, 2, 3)
 net.input([1, 1])
