@@ -27,13 +27,14 @@ class InputNeuron:
 
 class Network:
     def __init__(self, input, output, *num_per_hidden_layer, biases=None, weights=None):
+        self.score = 0
+        self.data = [input, output, *num_per_hidden_layer]
         self.inputs = [InputNeuron() for _ in range(input)]
         if biases is None:
             biases = [[random.uniform(-1, 1) for _ in range(num_per_hidden_layer[x])] for x in range(len(num_per_hidden_layer))]
             biases.append([random.uniform(-1, 1) for _ in range(output)])
-        else:
-            self.hidden_layers = [[Neuron(bias=biases[x][y]) for y in range(num_per_hidden_layer[x])] for x in range(len(num_per_hidden_layer))]
-            self.outputs = [Neuron(bias=biases[-1][y]) for y in range(output)]
+        self.hidden_layers = [[Neuron(bias=biases[x][y]) for y in range(num_per_hidden_layer[x])] for x in range(len(num_per_hidden_layer))]
+        self.outputs = [Neuron(bias=biases[-1][y]) for y in range(output)]
         self.neurons = [self.inputs, *self.hidden_layers, self.outputs]
 
         if weights is None:
@@ -72,3 +73,4 @@ net = Network(2, 2, 3)
 net.input([1, 1])
 net.feed_forward()
 net.get_output()
+print(net.get_weights_and_biases())
