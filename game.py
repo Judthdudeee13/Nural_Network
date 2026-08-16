@@ -2,10 +2,7 @@ import random
 import breeding
 import csv
 import os
-
-file_exists = os.path.exists("training.csv")
-
-
+import time
 
 class Game:
     def __init__(self):
@@ -61,27 +58,27 @@ def get_scores(parents):
     return highest, lowest, average
 
 enviroment = breeding.Enviroment(16, 2, 9, 9, 11)
-while True:
-    parents = enviroment.return_parents()
-    for parent in parents:
-        game = Game()
-        for _ in range(100):
-            game.change()
-            game.get_player_input(convert_input(parent.network.run(game.output())))
-        parent.network.score = game.score
-    best, worst, average = get_scores(parents)
-    file_exists = os.path.exists("training.csv")
-    with open("training.csv", "a", newline="") as file:
-        writer = csv.writer(file)
+file_exists = os.path.exists("training.csv")
+with open("training.csv", "a", newline="") as file:
+    writer = csv.writer(file)
 
-        if not file_exists:
-            writer.writerow(["Generation", "Best", "Worst", "Average"])
-
+    if not file_exists:
+        writer.writerow(["Generation", "Best", "Worst", "Average"])
+    while True:
+        parents = enviroment.return_parents()
+        for parent in parents:
+            game = Game()
+            for _ in range(100):
+                game.change()
+                game.get_player_input(convert_input(parent.network.run(game.output())))
+            parent.network.score = game.score
+        best, worst, average = get_scores(parents)
+        print(f"Generation: {enviroment.generation}, Best: {best}, Worst: {worst}, Average: {average}")
         writer.writerow([
             enviroment.generation,
             best,
             worst,
             average
         ])
-    enviroment.evolve()
+        enviroment.evolve()
 
