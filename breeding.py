@@ -56,22 +56,21 @@ class Specimin:
 
 
 class Enviroment:
-    def __init__(self, num_parents, num_kids, inputs, num_inputs, num_outputs, *num_hidden_layer):
+    def __init__(self, num_parents, num_kids, num_inputs, num_outputs, *num_hidden_layer):
         data = [num_inputs, num_outputs, num_hidden_layer]
         self.parents = [Parent(data) for _ in range(num_parents)]
         self.children_per_parent = num_kids
 
         self.generation = 0
-         
-    def judge_fitness(self):
-        for parent in self.parents:
-            rate(parent.network)
+
+    def return_parents(self):
+        return self.parents
 
     def kill_parents(self):
         parents = []
         temp_parents = self.parents
         self.parents = sorted(temp_parents, key=lambda x: x.network.score, reverse=True)
-        for i in range(int(len(self.parents)/self.childern_per_parent)):
+        for i in range(int(len(self.parents)/self.children_per_parent)):
                 parents.append(self.parents[i])
         self.parents = parents
 
@@ -82,13 +81,12 @@ class Enviroment:
                 self.parents.remove(parent1)
                 parent2 = random.choice(self.parents)
                 self.parents.remove(parent2)
-                for _ in range(self.childern_per_parent*2):
+                for _ in range(self.children_per_parent*2):
                     new_children.append(Specimin(parent1, parent2))
             self.parents = new_children
 
     def evolve(self):
-        self.judge_fitness()
-        self.kill()
+        self.kill_parents()
         self.next_generation()
         self.generation += 1
                 

@@ -62,15 +62,21 @@ class Network:
                 self.neurons[layer+1][neuron].input(values)
 
     def get_output(self):
+        output = []
         for x in self.neurons:
             for y in x:
-                print(y.send())
+                output.append(y)
+        return output
 
     def get_weights_and_biases(self):
         return self.weights, [[neuron.bias for neuron in layer] for layer in self.neurons[1:]]
+
+    def run(self, inputs):
+        self.input(inputs)
+        self.feed_forward()
+        return self.get_output()
 
 net = Network(2, 2, 3)
 net.input([1, 1])
 net.feed_forward()
 net.get_output()
-print(net.get_weights_and_biases())
