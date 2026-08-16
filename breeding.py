@@ -45,10 +45,10 @@ class Specimin:
         for layer in range(len(self.child_weights)):
             for neuron in range(len(self.child_weights[layer])):
                 for weight in range(len(self.child_weights[layer][neuron])):
-                    self.child_weights[layer][neuron][weight] += random.uniform(-0.1, 0.1) if random.randint(0, 100) == 0 else 0
+                    self.child_weights[layer][neuron][weight] += random.uniform(-0.2, 0.2) if random.randint(0, 50) == 0 else 0
         for layer in range(len(self.child_biases)):
             for neuron in range(len(self.child_biases[layer])):
-                self.child_biases[layer][neuron] += random.uniform(-0.1, 0.1) if random.randint(0, 100) == 0 else 0
+                self.child_biases[layer][neuron] += random.uniform(-0.2, 0.2) if random.randint(0, 50) == 0 else 0
                     
 
     def create_network(self):
