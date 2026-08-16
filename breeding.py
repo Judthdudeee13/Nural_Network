@@ -1,6 +1,6 @@
 import random
 from nerual_network import Network
-from game import *
+import time
 
 class Parent:
     def __init__(self, values):
@@ -25,8 +25,8 @@ class Specimin:
     def generate_self(self):
         child_biases = []
         child_weights = []
-        parent1_wights, parent1_biases = self.parent1.get_weights_and_biases() 
-        parent2_wights, parent2_biases = self.parent2.get_weights_and_biases()
+        parent1_wights, parent1_biases = self.parent1.network.get_weights_and_biases() 
+        parent2_wights, parent2_biases = self.parent2.network.get_weights_and_biases()
         for layer in range(len(parent1_wights)):
                     child_weights.append([])
                     for neuron in range(len(parent1_wights[layer])):

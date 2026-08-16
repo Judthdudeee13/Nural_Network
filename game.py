@@ -1,6 +1,5 @@
 import random
-from nerual_network import *
-from breeding import *
+import breeding
 
 class Game:
     def __init__(self):
@@ -35,13 +34,14 @@ def convert_input(input):
     return num
 
 while True:
-    enviroment = Enviroment(16, 2, 9, 9, 11)
+    enviroment = breeding.Enviroment(16, 2, 9, 9, 11)
     parents = enviroment.return_parents()
     for parent in parents:
         for _ in range(100):
             game = Game()
             game.change()
-            game.get_player_input(parent.network.run(game.output()))
+            game.get_player_input(convert_input(parent.network.run(game.output())))
         parent.network.score = game.score
         print(parent.network.score)
+    enviroment.evolve()
 
