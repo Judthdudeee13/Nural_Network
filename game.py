@@ -17,7 +17,13 @@ class Game:
             self.grid[x] = choice
 
     def output(self):
-        return self.grid
+        grid = []
+        for x in self.grid:
+            if x == 1:
+                grid.append(0.5)
+            else:
+                grid.append(0.1)
+        return grid
 
     def get_player_input(self, input):
         if self.grid[input] == 0:
@@ -33,8 +39,8 @@ def convert_input(input):
             num = x
     return num
 
+enviroment = breeding.Enviroment(16, 2, 9, 9, 11)
 while True:
-    enviroment = breeding.Enviroment(16, 2, 9, 9, 11)
     parents = enviroment.return_parents()
     for parent in parents:
         for _ in range(100):
