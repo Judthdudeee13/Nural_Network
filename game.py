@@ -57,7 +57,7 @@ def get_scores(parents):
 
     return highest, lowest, average
 
-enviroment = breeding.Enviroment(16, 2, 9, 9, 11)
+enviroment = breeding.Enviroment(48, 2, 9, 9, 11)
 file_exists = os.path.exists("training.csv")
 with open("training.csv", "a", newline="") as file:
     writer = csv.writer(file)
