@@ -32,6 +32,18 @@ class Game:
         if self.grid[input] == 0:
             self.score += 1
 
+def get_wieghts_biases(json_file):
+    with open(json_file, "r") as file:
+        data = json.load(file)
+
+        all_weights = []
+        all_biases = []
+
+        for parent in data["parents"]:
+            all_weights.append(parent["weights"])
+            all_biases.append(parent["biases"])
+
+    return all_weights, all_biases
 
 def convert_input(input):
     highest = -1
@@ -60,9 +72,11 @@ def get_scores(parents):
 
     return highest, lowest, average, data
 
-enviroment = breeding.Enviroment(48, 2, 9, 9, 20)
-file_exists = os.path.exists("20hidden_large.csv")
-with open("20hidden_large.csv", "a", newline="") as file:
+old_weights, old_biases = get_wieghts_biases("2layer_10hidden.json")
+
+enviroment = breeding.Enviroment(48, 2, 9, 9, 10, 10, weights=old_weights, biases=old_biases, generation=151644)
+file_exists = os.path.exists("10hidden_10hidden_large.csv")
+with open("10hidden_10hidden_large.csv", "a", newline="") as file:
     writer = csv.writer(file)
 
     if not file_exists:
@@ -90,7 +104,7 @@ with open("20hidden_large.csv", "a", newline="") as file:
                     biases = data[1]
                     file.write("\n========== PERFECT NETWORK ==========\n")
                     file.write(f"Generation: {enviroment.generation}\n")
-                    file.write(f"Network Structure: 20 Hidden Large Mutations")
+                    file.write(f"Network Structure: 2 layers of 10 Hidden Large Mutations")
                     file.write(f"Score: {parent.network.score}\n")
                     file.write(f"Weights: {weights}\n")
                     file.write(f"Biases: {biases}\n")

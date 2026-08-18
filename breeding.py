@@ -68,12 +68,12 @@ class Specimin:
 
 
 class Enviroment:
-    def __init__(self, num_parents, num_kids, num_inputs, num_outputs, *num_hidden_layer, weights = None, baises = None):
+    def __init__(self, num_parents, num_kids, num_inputs, num_outputs, *num_hidden_layer, weights = None, biases = None, generation = 0):
         data = [num_inputs, num_outputs, num_hidden_layer]
-        self.parents = [Parent(data) for _ in range(num_parents)] if weights == None else [Parent(data, weights[x], baises[x]) for x in range(num_parents)]
+        self.parents = [Parent(data) for _ in range(num_parents)] if weights == None else [Parent(data, weights[x], biases[x]) for x in range(num_parents)]
         self.children_per_parent = num_kids
 
-        self.generation = 0
+        self.generation = generation
 
     def return_parents(self):
         return self.parents
