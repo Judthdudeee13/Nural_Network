@@ -15,7 +15,7 @@ while True:
     average_scores = []
 
     try:
-        with open("training.csv", "r") as file:
+        with open("48_pool_20hidden_2pct_pm0.2_grid.csv", "r") as file:
             reader = csv.DictReader(file)
 
             for row in reader:

@@ -3,8 +3,8 @@ from nerual_network import Network
 import time
 
 class Parent:
-    def __init__(self, values):
-        self.network = Network(*values)
+    def __init__(self, values, weights=None, baises=None):
+        self.network = Network(*values, weights = weights, biases = baises)
         self.fitness = 0
 
 
@@ -45,10 +45,22 @@ class Specimin:
         for layer in range(len(self.child_weights)):
             for neuron in range(len(self.child_weights[layer])):
                 for weight in range(len(self.child_weights[layer][neuron])):
-                    self.child_weights[layer][neuron][weight] += random.uniform(-0.2, 0.2) if random.randint(0, 50) == 0 else 0
+                    if random.randint(0, 50) == 0:
+                        #self.child_weights[layer][neuron][weight] += random.uniform(-0.2, 0.2)
+                        if random.randint(0, 9) == 0:
+                            self.child_weights[layer][neuron][weight] += random.uniform(-1, 1)
+                        else:
+                            self.child_weights[layer][neuron][weight] += random.uniform(-0.2, 0.2)
+                        
         for layer in range(len(self.child_biases)):
             for neuron in range(len(self.child_biases[layer])):
-                self.child_biases[layer][neuron] += random.uniform(-0.2, 0.2) if random.randint(0, 50) == 0 else 0
+                if random.randint(0, 50) == 0:
+                    #self.child_biases[layer][neuron] += random.uniform(-0.2, 0.2)
+                    if random.randint(0, 9) == 0:
+                        self.child_biases[layer][neuron] += random.uniform(-1, 1)
+                    else:
+                        self.child_biases[layer][neuron] += random.uniform(-0.2, 0.2)
+                        
                     
 
     def create_network(self):
@@ -56,9 +68,9 @@ class Specimin:
 
 
 class Enviroment:
-    def __init__(self, num_parents, num_kids, num_inputs, num_outputs, *num_hidden_layer):
+    def __init__(self, num_parents, num_kids, num_inputs, num_outputs, *num_hidden_layer, weights = None, baises = None):
         data = [num_inputs, num_outputs, num_hidden_layer]
-        self.parents = [Parent(data) for _ in range(num_parents)]
+        self.parents = [Parent(data) for _ in range(num_parents)] if weights == None else [Parent(data, weights[x], baises[x]) for x in range(num_parents)]
         self.children_per_parent = num_kids
 
         self.generation = 0
