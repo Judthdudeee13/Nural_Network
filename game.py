@@ -64,6 +64,26 @@ def convert_input(input):
             num = x
     return num
 
+def save():
+    save_data = True if input('Do you want to save(y/n)? ') == 'y' else False
+    if save_data:
+        file_name = input("File Name(json): ")
+        data = {
+            "generation": enviroment.generation,
+            "parents": []
+        }
+        parents = enviroment.return_parents()
+        for parent in parents:
+            weights, biases = parent.network.get_weights_and_biases()
+            data["parents"].append({
+                "score": parent.network.score,
+                "weights": weights,
+                "biases": biases
+            })
+
+        with open(file_name, "w") as file:
+            json.dump(data, file, indent=4)
+
 def get_scores(parents):
     highest = 0
     data = None
@@ -85,84 +105,50 @@ def get_scores(parents):
 
 #old_weights, old_biases = get_wieghts_biases("test.json")
 
-enviroment = breeding.Enviroment(48, 2, 9, 9, 3)# #weights=old_weights, biases=old_biases, generation=2288)
-file_exists = os.path.exists("data/real/48_pool_3hidden_loop_grid.csv")
+enviroment = breeding.Enviroment(48, 2, 9, 9, 2)# #weights=old_weights, biases=old_biases, generation=2288)
+file_exists = os.path.exists("test1.csv")
 
 if __name__ == "__main__":
-    with open("data/real/48_pool_3hidden_loop_grid.csv", "a", newline="") as file:
-        writer = csv.writer(file)
+    for test in range(2):
+        enviroment = breeding.Enviroment(48, 2, 9, 9, 2)# #weights=old_weights, biases=old_biases, generation=2288)
+        file_exists = os.path.exists(f"test{test}.csv")
+        with open(f"test{test}.csv", "a", newline="") as file:
+            writer = csv.writer(file)
 
-        if not file_exists:
-            writer.writerow(["Generation", "Best", "Worst", "Average"])
-        try:
-            start_time = time.time()
-            with Pool(3) as pool:
-                while enviroment.generation <= 200000:
-                    parents = enviroment.return_parents()
-                    
-                    #parents = pool.map(train, parents)
-                    for parent in parents:
-                        train(parent)
-                    best, worst, average, data = get_scores(parents)
-                    print(f"Generation: {enviroment.generation}, Best: {best}, Worst: {worst}, Average: {average}")
-                    writer.writerow([
-                        enviroment.generation,
-                        best,
-                        worst,
-                        average
-                    ])
-                    if best == 100:
-                        with open("perfect.txt", "a") as file:
-                            weights = data[0]
-                            biases = data[1]
-                            file.write("\n========== PERFECT NETWORK ==========\n")
-                            file.write(f"Generation: {enviroment.generation}\n")
-                            file.write(f"Network Structure: 1 layer of 3 Large Mutations\n")
-                            file.write(f"Weights: {weights}\n")
-                            file.write(f"Biases: {biases}\n")
-                    enviroment.evolve()
+            if not file_exists:
+                writer.writerow(["Generation", "Best", "Worst", "Average"])
+            try:
+                start_time = time.time()
+                with Pool(3) as pool:
+                    while enviroment.generation <= 200000:
+                        parents = enviroment.return_parents()
 
-            print(time.time()-start_time)
-            save_data = True if input('Do you want to save(y/n)? ') == 'y' else False
-            if save_data:
-                file_name = input("File Name(json): ")
-                data = {
-                    "generation": enviroment.generation,
-                    "parents": []
-                }
-                parents = enviroment.return_parents()
-                for parent in parents:
-                    weights, biases = parent.network.get_weights_and_biases()
-                    data["parents"].append({
-                        "score": parent.network.score,
-                        "weights": weights,
-                        "biases": biases
-                    })
+                        if test == 0:
+                            parents = pool.map(train, parents)
+                        else:
+                            for parent in parents:
+                                train(parent)
+                        best, worst, average, data = get_scores(parents)
+                        print(f"Generation: {enviroment.generation}, Best: {best}, Worst: {worst}, Average: {average}")
+                        writer.writerow([
+                            enviroment.generation,
+                            best,
+                            worst,
+                            average
+                        ])
+                        if best == 100:
+                            with open("perfect.txt", "a") as file:
+                                weights = data[0]
+                                biases = data[1]
+                                file.write("\n========== PERFECT NETWORK ==========\n")
+                                file.write(f"Generation: {enviroment.generation}\n")
+                                file.write(f"Network Structure: 1 layer of 2 Large Mutations\n")
+                                file.write(f"Weights: {weights}\n")
+                                file.write(f"Biases: {biases}\n")
+                        enviroment.evolve()
 
-                with open(file_name, "w") as file:
-                    json.dump(data, file, indent=4)
-        except KeyboardInterrupt:
-            save_data = True if input('Do you want to save(y/n)? ') == 'y' else False
-            if save_data:
-                file_name = input("File Name(json): ")
-                data = {
-                    "generation": enviroment.generation,
-                    "parents": []
-                }
-                parents = enviroment.return_parents()
-                for parent in parents:
-                    weights, biases = parent.network.get_weights_and_biases()
-                    print("Biases:", biases)
-                    print("Number of bias layers:", len(biases))
-
-                    for i, layer in enumerate(biases):
-                        print(f"Layer {i}: {len(layer)} biases")
-                    data["parents"].append({
-                        "score": parent.network.score,
-                        "weights": weights,
-                        "biases": biases
-                    })
-
-                with open(file_name, "w") as file:
-                    json.dump(data, file, indent=4)
-
+                print(time.time()-start_time)
+                #save()
+                
+            except KeyboardInterrupt:
+                save()
